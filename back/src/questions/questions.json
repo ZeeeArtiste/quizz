@@ -1,0 +1,24 @@
+[
+    {
+        "id": 1,
+        "question": "Quelle est la capitale de l'Allemagne?",
+        "choices": [
+            "Berlin",
+            "Paris",
+            "Rome",
+            "Madrid"
+        ],
+        "answer": 0
+    },
+    {
+        "id": 2,
+        "question": "Quelle est la capitale de l'Espagne?",
+        "choices": [
+            "Lisbonne",
+            "Paris",
+            "Rome",
+            "Madrid"
+        ],
+        "answer": 3
+    }
+]

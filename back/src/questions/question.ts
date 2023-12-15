@@ -1,8 +1,12 @@
+import { Choice } from "./choice";
+
 export class Question {
     constructor(
         public id: number,
         public question: string,
-        public choices: string[],
-        public answer: number,
-    ) {}
+        public choices: Choice[],
+        // public answer: number,
+    ) { }
 }
+export { Choice };
+

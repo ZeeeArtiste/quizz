@@ -6,6 +6,6 @@ export class Quizz {
     constructor(
         public id: number,
         public title: string,
-        public questions: number[]
-    ) {}
+        public questions: number[] | Question[]
+    ) { }
 }

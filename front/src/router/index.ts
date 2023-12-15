@@ -1,23 +1,38 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import CreateQuizzView from '../views/CreateQuizzView.vue'
+import QuizzView from '../views/QuizzView.vue'
+import LoginView from '../views/LoginView.vue'
+import HandleAccountView from '../views/HandleAccountView.vue'
+import { isAuthenticated } from '@/utils'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'home',
-      component: HomeView
+      path: '/creer-quizz',
+      name: 'createQuizz',
+      component: CreateQuizzView,
+      meta: { requiresAuth: true }
     },
+    { path: '/quizz/:id', component: QuizzView },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
-    }
+      path: '/quizz/edit/:id',
+      component: CreateQuizzView,
+      meta: { requiresAuth: true }
+    },
+    { path: '/login', component: LoginView },
+    { path: '/creer-compte', component: HandleAccountView },
   ]
-})
+});
 
-export default router
+router.beforeEach(async (to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth) && !await isAuthenticated(router)) {
+    next({ path: '/login', query: { redirect: to.fullPath } });
+  } else {
+    next();
+  }
+});
+
+
+export default router;

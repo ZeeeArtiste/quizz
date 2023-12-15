@@ -9,24 +9,29 @@ export class UserRouter {
     }
 
     private configureRoutes(): void {
-        this.router.get('/:id', (req, res, next) => {
+        this.router.get('/:email', async (req, res, next) => {
             try {
-                const result = this.userController.getById(
-                    parseInt(req.params.id),
+                const result = await this.userController.getByEmail(
+                    (req.params.email),
                 );
-                res.status(200).json(result);
+                if (result) {
+                    res.status(200).json(result);
+                } else {
+                    res.status(404).json({ message: 'Compte non trouvé' });
+                }
             } catch (error: unknown) {
-                next(error);
+                res.status(500).json({ message: "Une erreur est survenue !", error: error })
             }
         });
 
-        this.router.post('/add-user', (req, res, next) => {
+        this.router.post('/add-user', async (req, res, next) => {
             try {
-                const result = this.userController.add(req.body.username);
+                const result = await this.userController.add(req.body.email, req.body.password);
                 res.status(200).json(result);
-            } catch (error: unknown) {
-                next(error);
+            } catch (error: any) {
+                res.status(500).json({ message: error.message, error: error })
             }
         });
     }
+
 }

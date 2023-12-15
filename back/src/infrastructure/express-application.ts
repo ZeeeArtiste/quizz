@@ -1,12 +1,14 @@
 import { ExpressRouter } from './express-router';
 import { ExpressServer } from './express-server';
-import { UserJSONService } from '../user/user.json-service';
+import { UserDbService } from '../user/user.db-service';
 import { UserService } from '../user/user.service';
 import * as dotenv from 'dotenv';
 import { QuestionService } from '../questions/question.service';
-import { QuestionJSONService } from '../questions/question.json-service';
+import { QuestionDBService } from '../questions/question.db-service';
 import { QuizzService } from '../quizz/quizz.service';
-import { QuizJSONService } from '../quizz/quizz.json-service';
+import { QuizzDBService } from '../quizz/quizz.db-service';
+import { createPool } from 'mysql2/promise';
+import { Pool } from 'mysql2/promise';
 
 export class ExpressApplication {
     private expressRouter!: ExpressRouter;
@@ -15,6 +17,7 @@ export class ExpressApplication {
     private userService!: UserService;
     private questionService!: QuestionService;
     private quizzService!: QuizzService;
+    private pool!: Pool;
 
 
 
@@ -29,6 +32,7 @@ export class ExpressApplication {
     private configureApplication(): void {
         this.configureEnvironment();
         this.configureServerPort();
+        this.configureBdd();
         this.configureServices();
         this.configureExpressRouter();
         this.configureServer();
@@ -45,10 +49,9 @@ export class ExpressApplication {
     }
 
     private configureServices(): void {
-        this.userService = new UserJSONService();
-        this.questionService = new QuestionJSONService();
-        this.quizzService = new QuizJSONService();
-
+        this.userService = new UserDbService(this.pool);
+        this.questionService = new QuestionDBService(this.pool);
+        this.quizzService = new QuizzDBService(this.pool);
     }
 
     private configureExpressRouter(): void {
@@ -66,5 +69,15 @@ export class ExpressApplication {
         }
 
         return port;
+    }
+
+    private configureBdd() {
+        this.pool = createPool({
+            host: process.env.MYSQL_HOST,
+            port: Number(process.env.MYSQL_PORT),
+            user: process.env.MYSQL_USER,
+            password: process.env.MYSQL_PASSWORD,
+            database: process.env.MYSQL_DB,
+        });
     }
 }
